@@ -20,7 +20,7 @@ ADDING THE FIRST PERSON CONTROLLER CHARACTER (PLAYER)
 
 3. In the Assets panel, Go to Standard Assets => Characters => FirstPersonCharacter => Prefabs. Drag the FPSController into the scene.
 
-4. With the FPSController selected in the Hierarchy (left pane), look in the Inspector (right pane). Change the Position to X:100, Y:0, Z:20
+4. With the FPSController selected in the Hierarchy (left pane), look in the Inspector (right pane). Change the Position to X:100, Y:20, Z:100
 
 5. Delete the Main Camera in the Hierarchy (the FPSController has its own camera, so the Main Camera is no longer needed).
 

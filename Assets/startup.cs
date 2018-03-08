@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class startup : MonoBehaviour {
 
+	// these variables can be changed in the Start function to experiment 
+	// with generating different types of cities
+	public float FrequencyOfHills;		
+	public float HighestHillHeight;
+	public float LowestHillHeight;
+	public float lotSize;				
+	public Vector3 minBuildingDimens;
+	public Vector3 medBuildingDimens;
+	public Vector3 bigBuildingDimens;
+
+	// global variables
 	public Terrain terrainMap;
-
-	// these variables can be changed to experiment with generating different types of cities
-	public float FrequencyOfHills = 5.0f;
-
 	public int terrainWidth;
 	public int terrainLength;
 	public int lotsByLength;
@@ -17,9 +24,18 @@ public class startup : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		FrequencyOfHills = 2.0f;			// higher number means more hills in the terrain
+		HighestHillHeight = 5.0f;			// higher number means hillier landscape									
+		LowestHillHeight = 0.0f;
+		lotSize = 20.0f;					// a lower number means smaller lots and narrower passages (if too big buildings will overlap)
+		minBuildingDimens = new Vector3 (5.0f, 10.0f, 5.0f);
+		medBuildingDimens = new Vector3 (6.0f, 20.0f, 10.0f);
+		bigBuildingDimens = new Vector3 (10.0f, 40.0f, 10.0f);
+
+
 		CreateTerrain ();
 		GenerateHeights (terrainMap, FrequencyOfHills);
-		AddTerrainMaterial ();
+		AddTerrainTexture ();
 		PlaceBuildings ();
 	}
 	
@@ -36,6 +52,7 @@ public class startup : MonoBehaviour {
 
 		TerrainData _TerrainData = new TerrainData();
 
+		// terrain is 10 x 10, try changing to 50 x 50 for a much larger city
 		_TerrainData.size = new Vector3(10, 600, 10);
 		_TerrainData.heightmapResolution = 512;
 		_TerrainData.baseMapResolution = 1024;
@@ -50,30 +67,22 @@ public class startup : MonoBehaviour {
 		_TerrainCollider.terrainData = _TerrainData;
 		terrainMap.terrainData = _TerrainData;
 
-		// Capture the width and length of the terrain
+		// Capture the width and length of the terrain to use in Perlin noise functions
 		terrainWidth = (int)terrainMap.terrainData.size.x;
 		terrainLength = (int)terrainMap.terrainData.size.z;
 	}
 
 	/*
-	 * Sets terrain material
-	 */
-	public void AddTerrainMaterial(){
-		SplatPrototype[] terrainTexture = new SplatPrototype[1];
-		terrainTexture [0] = new SplatPrototype ();
-		terrainTexture [0].texture = Resources.Load ("GroundTexture") as Texture2D;
-		terrainMap.terrainData.splatPrototypes = terrainTexture;
-	}
-
-	/*
-	 * Creates a height map using Perlin noise to determine hill dimensions
+	 * Creates a height map using Perlin noise to create hills and valleys for the terrain
 	 */
 	public void GenerateHeights(Terrain terrain, float tileSize) {
-		float HighestHillHeight = 10.0f;
-		float LowestHillHeight = 0.0f;
+		tileSize = 2.0f;
+		HighestHillHeight = 5.0f;
 		float hillHeight = (float)((float)HighestHillHeight - (float)LowestHillHeight) / ((float)terrain.terrainData.heightmapHeight / 2);
 		float baseHeight = (float)LowestHillHeight / ((float)terrain.terrainData.heightmapHeight / 2);
 		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
+		Debug.Log (hillHeight);
+		Debug.Log (baseHeight);
 		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
 		{
 			for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
@@ -82,9 +91,20 @@ public class startup : MonoBehaviour {
 			}
 		}
 
+		// apply the heights to the terrain
 		terrain.terrainData.SetHeights(0, 0, heights);
 	}
-		
+
+	/*
+	 * Sets terrain texture (texture should be present as a file in Resources folder)
+	 */
+	public void AddTerrainTexture(){
+		SplatPrototype[] terrainTexture = new SplatPrototype[1];
+		terrainTexture [0] = new SplatPrototype ();
+		terrainTexture [0].texture = Resources.Load ("GroundTexture") as Texture2D;
+		terrainMap.terrainData.splatPrototypes = terrainTexture;
+	}
+
 	/*
 	 *  Splits the terrain into building lots, then goes through each lot and
 	 *  generates a building for that lot and places it on the terrain
@@ -94,20 +114,12 @@ public class startup : MonoBehaviour {
 		// get all the coordinates for the lots on the map
 		Vector3[,] coordinates = CreateLots ();
 
+		// for each lot, generate a building and place it on the map
 		for (int i = 0; i < lotsByWidth; i++) {
 			for (int j = 0; j < lotsByLength; j++) {
 				CreateBuilding(coordinates[i, j]);
 			}
 		}
-	}
-
-	/*
-	 * Generates a Perlin noise value for the coordinatees of the building, weighted using a seed value
-	 * change the value of the seed to change the height and distribution of the buildings
-	 */
-	public float GenerateBuildingHeights(float xCoord, float yCoord) {
-		int seed = 47;
-		return 100 * Mathf.PerlinNoise(((float)xCoord / (float)terrainMap.terrainData.heightmapWidth) * seed, ((float)yCoord / (float)terrainMap.terrainData.heightmapHeight) * seed)/10.0f;
 	}
 
 	/* 
@@ -122,7 +134,7 @@ public class startup : MonoBehaviour {
 
 		// lotSize is an approximate preferred lot size (one size) in pixels.
 		// try changing it to 10.0f or 30.0f to see how the map changes.
-		float lotSize = 20.0f;
+
 
 		// first the number of lots you can fit by width and length
 		// we will cast to int so the lots will not be perfectly square
@@ -146,7 +158,7 @@ public class startup : MonoBehaviour {
 				// then add the midpoints for the length and width of the current lot
 				float widthMidPoint = currentWidthPosition + (lotWidth / 2);
 				float lengthMidPoint = currentLengthPosition + (lotLength / 2);
-				var lotCoords = new Vector3 (widthMidPoint, GenerateBuildingHeights(widthMidPoint, lengthMidPoint), lengthMidPoint);
+				var lotCoords = new Vector3 (widthMidPoint, GenerateBuildingHeight(widthMidPoint, lengthMidPoint), lengthMidPoint);
 				lotCoordinates [i, j] = lotCoords;
 			}
 		}
@@ -156,10 +168,7 @@ public class startup : MonoBehaviour {
 
 	public void CreateBuilding(Vector3 position) {
 
-		// Possible extenion: build an array of empty lots and randomize or procedurally add 
-		// vegetation or other terrain features, or wild animals, etc.	
-
-		// If the perlin value (building height factor) is less than 3, we do not build
+		// If the Perlin noise value for the Y axis is less than 3, we do not build
 		if (position.y < 3) {
 			return;
 		}
@@ -167,18 +176,18 @@ public class startup : MonoBehaviour {
 		// Otherwise, we create a building at the correct location and scale it
 		// according to which bucket it falls into based on the perlin value
 
-		// create
+		// create the building GameObject
 		var building = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		//building.transform.position = position;
 
-		if (position.y > 7) {
+		if (position.y > 8) {
 			// create big building
-			building.transform.localScale += new Vector3(10.0f, 50.0f, 10.0f);
+			building.transform.localScale += bigBuildingDimens;
 		} else if (position.y > 5) {
-			building.transform.localScale += new Vector3(6.0f, 20.0f, 10.0f);
+			// create medium building
+			building.transform.localScale += medBuildingDimens;
 		} else {
 			// create small building
-			building.transform.localScale += new Vector3(5.0f, 10.0f, 5.0f);
+			building.transform.localScale += minBuildingDimens;
 		}
 
 		// We need to figure out how high the terrain is at the point where the building will be generated
@@ -193,7 +202,14 @@ public class startup : MonoBehaviour {
 		CreateBuildingTexture(building);
 	}
 
-
+	/*
+	 * Generates a Perlin noise value for the coordinatees of the building, weighted using a seed value
+	 * change the value of the seed to change the height and distribution of the buildings
+	 */
+	public float GenerateBuildingHeight(float xCoord, float yCoord) {
+		int seed = 47;
+		return 100 * Mathf.PerlinNoise(((float)xCoord / (float)terrainMap.terrainData.heightmapWidth) * seed, ((float)yCoord / (float)terrainMap.terrainData.heightmapHeight) * seed)/10.0f;
+	}
 
 	/*
 	 * Create a simple texture for the building using code and return it
