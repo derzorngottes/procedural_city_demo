@@ -1,3 +1,6 @@
+A good primer on Perlin noise: https://gpfault.net/posts/perlin-noise.txt.html
+
+
 SETTING UP THE PROJECT
 
 1. When you first open Unity, create a new project and call it whatever you want. Mine is called “procedural_city.” 
@@ -32,7 +35,7 @@ For the purpose of this tutorial, we will keep all the code in a single file. Sc
 
 Note: if you double click on the startup script in the Assets pane, you are modifying the same script that is attached to the FPSController.
 
-3. Double click on the script to launch MonoDevelop, Unity’s code editor, where we will read and modify the code.
+3. Double click on the script to launch MonoDevelop, Unity’s code editor, where we will read and modify the code. The comments explain how each part of the script works.
 
 
 ADDING THE BUILDING TEXTURE
@@ -44,3 +47,5 @@ ADDING THE BUILDING TEXTURE
 3. Search under “Textures” and look for a free package.
 
 4. Once you have imported a package of your choosing, look into its folder in the Assets pane and locate the texture file you want to use for your project. When you find it, copy or move the texture file into the Resources folder. This allows you to load the texture in the C# script so that we can apply it to each building as it is generated.
+
+5. In the Resources folder, rename your texture “BricksTexture” so that it matches the name of the variable in the script.
