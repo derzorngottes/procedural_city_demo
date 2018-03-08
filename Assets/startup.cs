@@ -6,7 +6,9 @@ public class startup : MonoBehaviour {
 
 	public Terrain terrainMap;
 
-	public float NumberOfHills = 5.0f;
+	// these variables can be changed to experiment with generating different types of cities
+	public float FrequencyOfHills = 5.0f;
+
 	public int terrainWidth;
 	public int terrainLength;
 	public int lotsByLength;
@@ -16,7 +18,8 @@ public class startup : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		CreateTerrain ();
-		GenerateHeights (terrainMap, NumberOfHills);
+		GenerateHeights (terrainMap, FrequencyOfHills);
+		AddTerrainMaterial ();
 		PlaceBuildings ();
 	}
 	
@@ -50,6 +53,16 @@ public class startup : MonoBehaviour {
 		// Capture the width and length of the terrain
 		terrainWidth = (int)terrainMap.terrainData.size.x;
 		terrainLength = (int)terrainMap.terrainData.size.z;
+	}
+
+	/*
+	 * Sets terrain material
+	 */
+	public void AddTerrainMaterial(){
+		SplatPrototype[] terrainTexture = new SplatPrototype[1];
+		terrainTexture [0] = new SplatPrototype ();
+		terrainTexture [0].texture = Resources.Load ("GroundTexture") as Texture2D;
+		terrainMap.terrainData.splatPrototypes = terrainTexture;
 	}
 
 	/*
@@ -171,13 +184,12 @@ public class startup : MonoBehaviour {
 		// We need to figure out how high the terrain is at the point where the building will be generated
 		// We subtract 2.0f height so that the building sinks into the ground slightly, to look more natural 
 		// when sitting on a slope
-		float terrainHeightFactor = Terrain.activeTerrain.SampleHeight (new Vector3 (position.x, 0, position.z)) - 2.0f;
+		float terrainHeightFactor = Terrain.activeTerrain.SampleHeight (new Vector3 (position.x, 0, position.z)) - 5.0f;
 
 		// place at the correct location
 		building.transform.position = new Vector3(position.x, (building.transform.localScale.y / 2) + terrainHeightFactor, position.z);
 
 		//building.AddComponent<Rigidbody>();
-		//building.GetComponent<Renderer> ().material.color = Color.blue;
 		CreateBuildingTexture(building);
 	}
 
