@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class startup : MonoBehaviour {
 
-	// these variables can be changed in the Start function to experiment 
-	// with generating different types of cities
+	// these variables can be changed in the Start function to experiment with generating different types of cities
 	public float FrequencyOfHills;		
 	public float HighestHillHeight;
 	public float LowestHillHeight;
-	public float lotSize;				
+	public float lotSize;
+	public int buildingSeed;
 	public Vector3 minBuildingDimens;
 	public Vector3 medBuildingDimens;
 	public Vector3 bigBuildingDimens;
@@ -24,15 +24,19 @@ public class startup : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		// Initialize global variable values
 		FrequencyOfHills = 2.0f;			// higher number means more hills in the terrain
 		HighestHillHeight = 5.0f;			// higher number means hillier landscape									
 		LowestHillHeight = 0.0f;
 		lotSize = 20.0f;					// a lower number means smaller lots and narrower passages (if too big buildings will overlap)
+		buildingSeed = 47;					// the seed value for generating Perlin noise, changing it will change the layout of the buildings
+		// building dimensions
+		// changing these values will affect the size and shape of the buildings placed on the map
 		minBuildingDimens = new Vector3 (5.0f, 10.0f, 5.0f);
 		medBuildingDimens = new Vector3 (6.0f, 20.0f, 10.0f);
 		bigBuildingDimens = new Vector3 (10.0f, 40.0f, 10.0f);
 
-
+		// Call the methods to create and place terrain and buildings
 		CreateTerrain ();
 		GenerateHeights (terrainMap, FrequencyOfHills);
 		AddTerrainTexture ();
@@ -57,9 +61,6 @@ public class startup : MonoBehaviour {
 		_TerrainData.heightmapResolution = 512;
 		_TerrainData.baseMapResolution = 1024;
 		_TerrainData.SetDetailResolution(1024, 16);
-
-		int _heightmapWidth = _TerrainData.heightmapWidth;
-		int _heightmapHeight = _TerrainData.heightmapHeight;
 
 		TerrainCollider _TerrainCollider = TerrainObj.AddComponent<TerrainCollider>();
 		terrainMap = TerrainObj.AddComponent<Terrain>();
@@ -132,10 +133,6 @@ public class startup : MonoBehaviour {
 	 */
 	public Vector3[,] CreateLots() {
 
-		// lotSize is an approximate preferred lot size (one size) in pixels.
-		// try changing it to 10.0f or 30.0f to see how the map changes.
-
-
 		// first the number of lots you can fit by width and length
 		// we will cast to int so the lots will not be perfectly square
 		// but there will be no remainder in the terrain
@@ -207,8 +204,7 @@ public class startup : MonoBehaviour {
 	 * change the value of the seed to change the height and distribution of the buildings
 	 */
 	public float GenerateBuildingHeight(float xCoord, float yCoord) {
-		int seed = 47;
-		return 100 * Mathf.PerlinNoise(((float)xCoord / (float)terrainMap.terrainData.heightmapWidth) * seed, ((float)yCoord / (float)terrainMap.terrainData.heightmapHeight) * seed)/10.0f;
+		return 100 * Mathf.PerlinNoise(((float)xCoord / (float)terrainMap.terrainData.heightmapWidth) * buildingSeed, ((float)yCoord / (float)terrainMap.terrainData.heightmapHeight) * buildingSeed)/10.0f;
 	}
 
 	/*
@@ -217,6 +213,6 @@ public class startup : MonoBehaviour {
 	public void CreateBuildingTexture(GameObject building)
 	{
 		var buildingRenderer = building.GetComponent<Renderer> ();
-		buildingRenderer.material.mainTexture = Resources.Load("BricksTexture") as Texture;
+		buildingRenderer.material.mainTexture = Resources.Load("BuildingTexture") as Texture;
 	}
 }

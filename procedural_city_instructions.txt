@@ -1,11 +1,19 @@
 A good primer on Perlin noise: https://gpfault.net/posts/perlin-noise.txt.html
 
 
+PRE-REQUISITE
+
+This project is developed and tested using the current version of Unity Personal Edition (5.3.8p2). I have observed bugs using older versions of Unity so it is recommended that you update Unity before creating and running this project.
+
+
 SETTING UP THE PROJECT
 
 1. When you first open Unity, create a new project and call it whatever you want. Mine is called “procedural_city.” 
 
-2. In the project that loads, you will see four important panes in the Unity environment: 
+
+UNITY UI OVERVIEW
+
+In the project that loads, you will see four important panes in the Unity environment: 
 1: On the left side there is a pane called “Hierarchy.” When you first create the project you should see two objects in the Hierarchy, a Main Camera and a Directional Light.
 2: In the middle there is a pane with two tabs, “Scene” and “Game.” This is where you will see the output and test the game play.
 3: On the right side there is a pane called “Inspector.” This is where you can see the properties of GameObjects.
@@ -20,7 +28,7 @@ ADDING THE FIRST PERSON CONTROLLER CHARACTER (PLAYER)
 
 3. In the Assets panel, Go to Standard Assets => Characters => FirstPersonCharacter => Prefabs. Drag the FPSController into the scene.
 
-4. With the FPSController selected in the Hierarchy (left pane), look in the Inspector (right pane). Change the Position to X:100, Y:20, Z:100
+4. With the FPSController selected in the Hierarchy (left pane), look in the Inspector (right pane). Under “Transform” (at the top), change the Position to X:100, Y:20, Z:100
 
 5. Delete the Main Camera in the Hierarchy (the FPSController has its own camera, so the Main Camera is no longer needed).
 
@@ -29,7 +37,7 @@ CREATING THE STARTUP SCRIPT
 
 For the purpose of this tutorial, we will keep all the code in a single file. Scripts in Unity can be attached to GameObjects. Unity scripts have a “Start” function which runs when the GameObject is instantiated in the game. Since we want our code to run as soon as the game is loaded, we will attach it to our player (First Person Controller).
 
-1. In the Assets pane, right click and select “Import New Asset…” and then select the script “startup.cs” which you downloaded from Github.
+1. In the Assets pane, right click and select “Import New Asset…” and then select the script “startup.cs” which you downloaded from Github. 
 
 2. You should see the startup script in the Assets pane. Drag it onto the FPSController in the Hierarchy. You should see the Startup script attached to the FPSController in the Inspector now. 
 
@@ -44,8 +52,31 @@ ADDING THE BUILDING TEXTURE
 
 2. In the top menu bar, go to Window => Asset Store. You can maximize the Asset Store view by clicking on the little menu icon on the top right and selecting “Maximize.”
 
-3. Search under “Textures” and look for a free package.
+3. Search under “Textures & Materials” => and look for a free package that you like. 
 
 4. Once you have imported a package of your choosing, look into its folder in the Assets pane and locate the texture file you want to use for your project. When you find it, copy or move the texture file into the Resources folder. This allows you to load the texture in the C# script so that we can apply it to each building as it is generated.
 
-5. In the Resources folder, rename your texture “BricksTexture” so that it matches the name of the variable in the script.
+5. In the Resources folder, rename your texture “BuildingTexture” so that it matches the name of the variable in the script.
+
+ADDING THE GROUND TEXTURE
+
+1. Open the Asset Store (see above) and under “Textures & Materials” => “Ground” look for a free package that contains a texture you like.
+
+2. As in #4 above, after you have imported the package, move the texture file into the Resources folder and rename it “GroundTexture” so that it can be loaded in the script.
+
+
+RUNNING THE GAME
+
+After performing the above steps you should be able to run the game by clicking the play button at the top of the Unity editor. You can use the arrow keys to move and the mouse to look around. Hold down shift to run.
+
+
+TROUBLESHOOTING
+
+Renaming textures
+To rename a texture, do a slow click on the name in the Asset panel and it should change to an editable textbox
+
+Character falls through the ground
+Your FPSController needs to be set in a position so that it spawns above the terrain. You may be spawning off the terrain, or under the terrain. Try changing the coordinates under the Transform section in the Inspector
+
+Cannot find texture
+Make sure that the Resources folder is in the top-level of the Assets panel (i.e. you didn’t accidentally create it inside one of the imported package folders). Check that the file names in the Asset panel match the file names you are loading in the script with Resources.Load
