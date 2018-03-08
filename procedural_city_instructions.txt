@@ -1,0 +1,46 @@
+SETTING UP THE PROJECT
+
+1. When you first open Unity, create a new project and call it whatever you want. Mine is called “procedural_city.” 
+
+2. In the project that loads, you will see four important panes in the Unity environment: 
+1: On the left side there is a pane called “Hierarchy.” When you first create the project you should see two objects in the Hierarchy, a Main Camera and a Directional Light.
+2: In the middle there is a pane with two tabs, “Scene” and “Game.” This is where you will see the output and test the game play.
+3: On the right side there is a pane called “Inspector.” This is where you can see the properties of GameObjects.
+4: At the bottom is a pane called “Assets” where you will create and manage game assets (or during gameplay, “Console” where you will see output from your script).
+
+
+ADDING THE FIRST PERSON CONTROLLER CHARACTER (PLAYER)
+
+1. Under the Assets folder, right click and “Import Package” => “Character”
+
+2. In the window that pops up you can deselect the roller ball and third person character, if you only want first-person control (you can always import these later).
+
+3. In the Assets panel, Go to Standard Assets => Characters => FirstPersonCharacter => Prefabs. Drag the FPSController into the scene.
+
+4. With the FPSController selected in the Hierarchy (left pane), look in the Inspector (right pane). Change the Position to X:100, Y:0, Z:20
+
+5. Delete the Main Camera in the Hierarchy (the FPSController has its own camera, so the Main Camera is no longer needed).
+
+
+CREATING THE STARTUP SCRIPT
+
+For the purpose of this tutorial, we will keep all the code in a single file. Scripts in Unity can be attached to GameObjects. Unity scripts have a “Start” function which runs when the GameObject is instantiated in the game. Since we want our code to run as soon as the game is loaded, we will attach it to our player (First Person Controller).
+
+1. In the Assets pane, right click and select “Import New Asset…” and then select the script “startup.cs” which you downloaded from Github.
+
+2. You should see the startup script in the Assets pane. Drag it onto the FPSController in the Hierarchy. You should see the Startup script attached to the FPSController in the Inspector now. 
+
+Note: if you double click on the startup script in the Assets pane, you are modifying the same script that is attached to the FPSController.
+
+3. Double click on the script to launch MonoDevelop, Unity’s code editor, where we will read and modify the code.
+
+
+ADDING THE BUILDING TEXTURE
+
+1. In the Assets pane, create a new folder called “Resources.”
+
+2. In the top menu bar, go to Window => Asset Store. You can maximize the Asset Store view by clicking on the little menu icon on the top right and selecting “Maximize.”
+
+3. Search under “Textures” and look for a free package.
+
+4. Once you have imported a package of your choosing, look into its folder in the Assets pane and locate the texture file you want to use for your project. When you find it, copy or move the texture file into the Resources folder. This allows you to load the texture in the C# script so that we can apply it to each building as it is generated.
