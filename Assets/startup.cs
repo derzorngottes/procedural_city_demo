@@ -82,8 +82,6 @@ public class startup : MonoBehaviour {
 		float hillHeight = (float)((float)HighestHillHeight - (float)LowestHillHeight) / ((float)terrain.terrainData.heightmapHeight / 2);
 		float baseHeight = (float)LowestHillHeight / ((float)terrain.terrainData.heightmapHeight / 2);
 		float[,] heights = new float[terrain.terrainData.heightmapWidth, terrain.terrainData.heightmapHeight];
-		Debug.Log (hillHeight);
-		Debug.Log (baseHeight);
 		for (int i = 0; i < terrain.terrainData.heightmapWidth; i++)
 		{
 			for (int k = 0; k < terrain.terrainData.heightmapHeight; k++)
